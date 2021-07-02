@@ -581,7 +581,7 @@ LINUX_BINARY_PLATFORM = "centos7"
 
 DEFAULT_XCODE_VERSION = "12.5.1"
 XCODE_VERSION_REGEX = re.compile(r"^\d+\.\d+(\.\d+)?$")
-XCODE_VERSION_OVERRIDES = {"10.2.1": "10.3", "11.2": "11.2.1", "11.3": "11.3.1"}
+XCODE_VERSION_OVERRIDES = {"10.2.1": "10.3", "11.2": "11.2.1", "11.3": "11.3.1", "12.4": "12.5.1"}
 
 BUILD_LABEL_PATTERN = re.compile(r"^Build label: (\S+)$", re.MULTILINE)
 
