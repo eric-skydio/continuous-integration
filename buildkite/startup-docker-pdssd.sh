@@ -42,20 +42,26 @@ chmod 0755 "${AGENT_HOME}"
 case $(hostname -f) in
   *.bazel-public.*)
     ARTIFACT_BUCKET="bazel-trusted-buildkite-artifacts"
-    BUILDKITE_TOKEN=$(gsutil cat "gs://bazel-trusted-encrypted-secrets/buildkite-trusted-agent-token.enc" | \
+    BUILDKITE_TOKEN=$(curl -fsS --retry 3 https://storage.googleapis.com/bazel-trusted-encrypted-secrets/buildkite-trusted-agent-token.enc | \
         gcloud kms decrypt --project bazel-public --location global --keyring buildkite --key buildkite-trusted-agent-token --ciphertext-file - --plaintext-file -)
+    BUILDKITE_API_TOKEN=$(curl -fsS --retry 3 https://storage.googleapis.com/bazel-trusted-encrypted-secrets/buildkite-trusted-api-token.enc | \
+            gcloud kms decrypt --project bazel-public --location global --keyring buildkite --key buildkite-trusted-api-token --ciphertext-file - --plaintext-file -)
     ;;
   *.bazel-untrusted.*)
     case $(hostname -f) in
       *-testing-*)
         ARTIFACT_BUCKET="bazel-testing-buildkite-artifacts"
-        BUILDKITE_TOKEN=$(gsutil cat "gs://bazel-testing-encrypted-secrets/buildkite-testing-agent-token.enc" | \
+        BUILDKITE_TOKEN=$(curl -fsS --retry 3 https://storage.googleapis.com/bazel-testing-encrypted-secrets/buildkite-testing-agent-token.enc | \
             gcloud kms decrypt --project bazel-untrusted --location global --keyring buildkite --key buildkite-testing-agent-token --ciphertext-file - --plaintext-file -)
+        BUILDKITE_API_TOKEN=$(curl -fsS --retry 3 https://storage.googleapis.com/bazel-testing-encrypted-secrets/buildkite-testing-api-token.enc | \
+            gcloud kms decrypt --project bazel-untrusted --location global --keyring buildkite --key buildkite-testing-api-token --ciphertext-file - --plaintext-file -)
         ;;
       *)
         ARTIFACT_BUCKET="bazel-untrusted-buildkite-artifacts"
-        BUILDKITE_TOKEN=$(gsutil cat "gs://bazel-untrusted-encrypted-secrets/buildkite-untrusted-agent-token.enc" | \
+        BUILDKITE_TOKEN=$(curl -fsS --retry 3 https://storage.googleapis.com/bazel-untrusted-encrypted-secrets/buildkite-untrusted-agent-token.enc | \
             gcloud kms decrypt --project bazel-untrusted --location global --keyring buildkite --key buildkite-untrusted-agent-token --ciphertext-file - --plaintext-file -)
+        BUILDKITE_API_TOKEN=$(curl -fsS --retry 3 https://storage.googleapis.com/bazel-untrusted-encrypted-secrets/buildkite-untrusted-api-token.enc | \
+            gcloud kms decrypt --project bazel-untrusted --location global --keyring buildkite --key buildkite-untrusted-api-token --ciphertext-file - --plaintext-file -)
         ;;
     esac
 esac
@@ -86,6 +92,7 @@ EOF
 cat > /etc/buildkite-agent/hooks/environment <<EOF
 #!/bin/bash
 set -euo pipefail
+export BUILDKITE_API_TOKEN="${BUILDKITE_API_TOKEN}"
 export BUILDKITE_ARTIFACT_UPLOAD_DESTINATION="gs://${ARTIFACT_BUCKET}/\${BUILDKITE_JOB_ID}"
 EOF
 
@@ -104,17 +111,14 @@ case $(hostname -f) in
         ;;
 esac
 
-docker pull "gcr.io/$PREFIX/centos7-java8" &
-docker pull "gcr.io/$PREFIX/centos7-releaser" &
-docker pull "gcr.io/$PREFIX/debian10-java11" &
-docker pull "gcr.io/$PREFIX/ubuntu1604-bazel-java8" &
-docker pull "gcr.io/$PREFIX/ubuntu1604-java8" &
-docker pull "gcr.io/$PREFIX/ubuntu1804-bazel-java11" &
-docker pull "gcr.io/$PREFIX/ubuntu1804-java11" &
-docker pull "gcr.io/$PREFIX/ubuntu2004-java11" &
-wait
-
 ### Start the Buildkite agent service.
 systemctl start buildkite-agent
+
+docker pull "gcr.io/$PREFIX/centos7-java8" &
+docker pull "gcr.io/$PREFIX/debian10-java11" &
+docker pull "gcr.io/$PREFIX/ubuntu1604-java8" &
+docker pull "gcr.io/$PREFIX/ubuntu1804-java11" &
+docker pull "gcr.io/$PREFIX/ubuntu2004-java11" &
+wait || true  # ignore potential failures while pulling containers
 
 exit 0
