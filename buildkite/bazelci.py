@@ -42,7 +42,7 @@ import yaml
 # Initialize the random number generator.
 random.seed()
 
-BUILDKITE_ORG = os.environ["BUILDKITE_ORGANIZATION_SLUG"]
+BUILDKITE_ORG = "bazel"
 THIS_IS_PRODUCTION = BUILDKITE_ORG == "bazel"
 THIS_IS_TESTING = BUILDKITE_ORG == "bazel-testing"
 THIS_IS_TRUSTED = BUILDKITE_ORG == "bazel-trusted"
