@@ -2000,6 +2000,8 @@ def upload_test_logs_from_bep(bep_file, tmpdir, binary_platform, monitor_flaky_t
 def upload_json_profile(json_profile_path, tmpdir):
     if not os.path.exists(json_profile_path):
         return
+
+    eprint("agent:"+execute_command_and_get_output(['whereis','buildkite-agent']))
     print_collapsed_group(":gcloud: Uploading JSON Profile")
     execute_command(["buildkite-agent", "artifact", "upload", json_profile_path], cwd=tmpdir)
 
