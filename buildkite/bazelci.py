@@ -3300,6 +3300,8 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
+    upload_json_profile('/dev/null', "/tmp")
+
     if args.script:
         global SCRIPT_URL
         SCRIPT_URL = args.script
