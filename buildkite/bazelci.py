@@ -1812,7 +1812,7 @@ def execute_bazel_build(
         [] if (use_bazelisk_migrate() or not incompatible_flags) else incompatible_flags,
         bep_file,
         bazel_binary,
-        enable_remote_cache=True,
+        enable_remote_cache=False,
     )
 
     print_expanded_group(":bazel: Build ({})".format(bazel_version))
@@ -1971,7 +1971,7 @@ def execute_bazel_test(
         [] if (use_bazelisk_migrate() or not incompatible_flags) else incompatible_flags,
         bep_file,
         bazel_binary,
-        enable_remote_cache=not monitor_flaky_tests,
+        enable_remote_cache=False,
     )
 
     print_expanded_group(":bazel: Test ({})".format(bazel_version))
