@@ -54,7 +54,7 @@ GITHUB_BRANCH = {"bazel": "master", "bazel-trusted": "master", "bazel-testing": 
     BUILDKITE_ORG, "master")
 
 
-SCRIPT_URL = "https://raw.githubusercontent.com/bazelbuild/continuous-integration/{}/buildkite/bazelci.py?{}".format(
+SCRIPT_URL = "https://raw.githubusercontent.com/eric-skydio/continuous-integration/{}/buildkite/bazelci.py?{}".format(
     GITHUB_BRANCH, int(time.time())
 )
 
@@ -66,7 +66,7 @@ AGGREGATE_INCOMPATIBLE_TEST_RESULT_URL = "https://raw.githubusercontent.com/baze
     GITHUB_BRANCH, int(time.time())
 )
 
-EMERGENCY_FILE_URL = "https://raw.githubusercontent.com/bazelbuild/continuous-integration/{}/buildkite/emergency.yml?{}".format(
+EMERGENCY_FILE_URL = "https://raw.githubusercontent.com/eric-skydio/continuous-integration/{}/buildkite/emergency.yml?{}".format(
     GITHUB_BRANCH, int(time.time())
 )
 
