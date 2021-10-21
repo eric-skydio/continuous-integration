@@ -1998,7 +1998,7 @@ def upload_test_logs_from_bep(bep_file, tmpdir, binary_platform, monitor_flaky_t
 
 
 def upload_json_profile(json_profile_path, tmpdir):
-    eprint("agent:" + execute_command_and_get_output(['buildkite-agent', '-h'])) # 
+    # eprint("agent:" + execute_command_and_get_output(['buildkite-agent', '-h'])) # 
     if not os.path.exists(json_profile_path):
         return
 
@@ -3302,7 +3302,7 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
-    upload_json_profile('/dev/null', "/tmp")
+    # upload_json_profile('/dev/null', "/tmp")
 
     if args.script:
         global SCRIPT_URL
